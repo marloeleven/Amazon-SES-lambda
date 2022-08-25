@@ -1,4 +1,4 @@
-import { HTTP_CODES, parseEncodedBody } from '../utils';
+import { HTTP_CODES, safeParseString } from '../utils';
 import { ses } from '../utils/ses';
 import { templateSchema } from '../utils/validation-schema';
 
@@ -42,7 +42,7 @@ async function getTemplate(name) {
  * @returns {Response}
  */
 export async function handleGetTemplate(body) {
-  const data = parseEncodedBody(body, false);
+  const data = safeParseString(body, false);
 
   if (!data) {
     return {
@@ -108,7 +108,7 @@ async function createTemplate({
  * @returns {Response}
  */
 export async function handleCreateTemplate(body) {
-  const data = parseEncodedBody(body, false);
+  const data = safeParseString(body, false);
 
   if (!data) {
     return {

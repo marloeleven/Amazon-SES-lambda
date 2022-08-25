@@ -26,7 +26,7 @@ export const DEFAULT_RESPONSE = Promise.resolve({
  * @param {T | any} defaultValue
  * @returns
  */
-export function parseEncodedBody(jsonStr, defaultValue = {}) {
+export function safeParseString(jsonStr, defaultValue = {}) {
   try {
     return JSON.parse(jsonStr);
   } catch (e) {

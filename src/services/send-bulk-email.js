@@ -1,7 +1,7 @@
 import { ses } from '../utils/ses';
 import { CONFIG } from '../utils/config';
 import { emailSchema } from '../utils/validation-schema';
-import { chunk, HTTP_CODES, parseEncodedBody } from '../utils';
+import { chunk, HTTP_CODES, safeParseString } from '../utils';
 import { TEMPLATES } from './template';
 
 /**
@@ -53,7 +53,7 @@ function sendBulkTemplatedEmail({
  * @param {string} body
  */
 export async function handleSendBulkEmail(body) {
-  const data = parseEncodedBody(body, false);
+  const data = safeParseString(body, false);
 
   if (!data) {
     return {
