@@ -1,35 +1,53 @@
-import { CONFIG } from '../utils/config';
-import { ses } from '../utils/ses';
+import * as ses from '../utils/ses';
+import { emailSchema } from '../utils/validation-schema';
+import { HTTP_CODES, MESSAGE, safeParseString } from '../utils';
 
 /**
  *
- * @param {object} param
- * @param {string} param.fromName
- * @param {string[]} param.recipients
- * @param {string} param.subject
- * @param {string} param.html
- * @returns
+ * @param {string} body
  */
-export function sendEmail({ fromName, recipients, subject, html }) {
-  return ses
-    .sendEmail({
-      Destination: {
-        ToAddresses: recipients,
-      },
-      ReplyToAddresses: [CONFIG.ORIGIN_EMAIL],
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: html,
-          },
-        },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: subject,
-        },
-      },
-      Source: `"${fromName}" <${CONFIG.ORIGIN_EMAIL}>`,
-    })
-    .promise();
+export async function handleSendEmail(body) {
+  const data = safeParseString(body, false);
+
+  if (!data) {
+    return {
+      statusCode: HTTP_CODES.BAD_REQUEST,
+      body: MESSAGE.BAD_REQUEST_NO_DATA,
+    };
+  }
+
+  const {
+    error,
+    value: { fromName, recipients, subject, html },
+  } = emailSchema.validate(data);
+
+  if (error) {
+    return {
+      statusCode: HTTP_CODES.BAD_REQUEST,
+      body: error.details,
+    };
+  }
+
+  try {
+    for (const email of recipients) {
+      await ses.sendEmail({
+        fromName,
+        recipients: [email],
+        subject,
+        html,
+      });
+    }
+
+    return {
+      statusCode: HTTP_CODES.SUCESS,
+      body: 'Email sent successfully.',
+    };
+  } catch (error) {
+    console.error(error);
+  }
+
+  return {
+    statusCode: HTTP_CODES.SERVER_ERROR,
+    body: MESSAGE.SERVER_ERROR,
+  };
 }
