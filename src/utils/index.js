@@ -6,6 +6,15 @@ export const HTTP_CODES = {
   SUCESS: 200,
 };
 
+export const MESSAGE = {
+  SERVER_ERROR: 'An error occured',
+  BAD_REQUEST_NO_DATA: 'No data received',
+};
+
+export const TEMPLATES = {
+  BASIC: 'BASIC_TEMPLATE',
+};
+
 /**
  * @typedef Response
  * @prop {number} statusCode
