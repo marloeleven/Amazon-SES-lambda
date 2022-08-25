@@ -9,6 +9,19 @@ export const HTTP_CODES = {
 };
 
 /**
+ * @typedef Response
+ * @prop {number} statusCode
+ * @prop {any} body
+ *
+ * @typedef {Object.<string, (body: string) => Promise<Response>>} EndPoint
+ */
+
+export const DEFAULT_RESPONSE = Promise.resolve({
+  statusCode: 404,
+  body: 'Unsupported Endpoint',
+});
+
+/**
  * @param {string} base64EncodedBody
  * @returns {object}
  */

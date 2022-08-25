@@ -1,6 +1,46 @@
-import { authCheck, HTTP_CODES } from './utils';
+import { authCheck, DEFAULT_RESPONSE, HTTP_CODES } from './utils';
 import * as services from './services';
 
+const ENDPOINTS = {
+  EMAIL: '/email',
+  TEMPLATE: '/template',
+};
+
+/**
+ * @typedef {import('./utils').EndPoint} EndPoint
+ *
+ * @type {EndPoint}
+ */
+const POST_ENPOINTS = {
+  [ENDPOINTS.EMAIL]: services.handleSendBulkEmail,
+  [ENDPOINTS.TEMPLATE]: services.handleCreateTemplate,
+};
+
+/**
+ * @type {EndPoint}
+ */
+const GET_ENDPOINTS = {
+  [ENDPOINTS.TEMPLATE]: services.handleGetTemplate,
+};
+
+/**
+ *
+ * @param {'POST' | 'GET'} method
+ * @returns {EndPoint}
+ */
+function getEndpoints(method) {
+  return method === 'POST' ? POST_ENPOINTS : GET_ENDPOINTS;
+}
+
+/**
+ *
+ * @param {object} event
+ * @param {string} event.body
+ * @param {{ authorization: string }} event.headers
+ * @param {{ http: { method: 'POST' | 'GET', path: string } }} event.requestContext
+ *
+ * @returns
+ */
 export const request = async (event) => {
   const {
     body,
@@ -28,45 +68,3 @@ export const request = async (event) => {
     body: 'Endpoint not found.',
   };
 };
-
-const ENDPOINTS = {
-  EMAIL: '/email',
-  TEMPLATE: '/template',
-};
-
-/**
- * @typedef Response
- * @prop {number} statusCode
- * @prop {any} body
- *
- * @typedef {Object.<string, (body: string) => Promise<Response>>} EndPoint
- */
-
-const DEFAULT_RESPONSE = Promise.resolve({
-  statusCode: 404,
-  body: 'Unsupported Endpoint',
-});
-
-/**
- * @type {EndPoint}
- */
-const POST_ENPOINTS = {
-  [ENDPOINTS.EMAIL]: services.handleSendBulkEmail,
-  [ENDPOINTS.TEMPLATE]: () => DEFAULT_RESPONSE,
-};
-
-/**
- * @type {EndPoint}
- */
-const GET_ENDPOINTS = {
-  [ENDPOINTS.TEMPLATE]: () => DEFAULT_RESPONSE,
-};
-
-/**
- *
- * @param {'POST' | 'GET'} method
- * @returns {EndPoint}
- */
-function getEndpoints(method) {
-  return method === 'POST' ? POST_ENPOINTS : GET_ENDPOINTS;
-}

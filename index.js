@@ -1,3 +1,3 @@
 import * as controller from './controller';
 
-export const handler = controller.sendEmail;
+export const handler = controller.request;
