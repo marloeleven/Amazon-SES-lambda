@@ -1,10 +1,18 @@
 import { CONFIG } from './config';
 
+export const HTTP_CODES = {
+  SERVER_ERROR: 500,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  UNAUTHORIZED_REQUEST: 401,
+  SUCESS: 200,
+};
+
 /**
  * @param {string} base64EncodedBody
  * @returns {object}
  */
-export function toObject(base64EncodedBody) {
+function toObject(base64EncodedBody) {
   const decodedStr = atob(base64EncodedBody);
 
   const urlParams = new URLSearchParams(decodedStr);
@@ -20,13 +28,13 @@ export function toObject(base64EncodedBody) {
 /**
  * @template T
  *
- * @param {string} base64EncodedBody
+ * @param {string} jsonStr
  * @param {T | any} defaultValue
  * @returns
  */
-export function parseFromString(base64EncodedBody, defaultValue = {}) {
+export function parseEncodedBody(jsonStr, defaultValue = {}) {
   try {
-    return toObject(base64EncodedBody);
+    return JSON.parse(jsonStr);
   } catch (e) {
     return defaultValue;
   }

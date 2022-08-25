@@ -1,16 +1,15 @@
-import { authCheck, chunk, parseFromString } from './utils';
-import * as service from './service';
-import { validate } from './utils/validator/validator';
-import { CONFIG } from './utils/config';
+import { authCheck, HTTP_CODES } from './utils';
+import * as services from './services';
 
-const HTTP_CODES = {
-  SERVER_ERROR: 500,
-  BAD_REQUEST: 400,
-  UNAUTHORIZED_REQUEST: 401,
-  SUCESS: 200,
-};
+export const request = async (event) => {
+  const {
+    body,
+    headers: { authorization },
+    requestContext: {
+      http: { method, path },
+    },
+  } = event;
 
-export const sendEmail = async ({ body, headers: { authorization } }) => {
   if (!authCheck(authorization)) {
     return {
       statusCode: HTTP_CODES.UNAUTHORIZED_REQUEST,
@@ -18,74 +17,56 @@ export const sendEmail = async ({ body, headers: { authorization } }) => {
     };
   }
 
-  const { fromName, recipients, subject, html } = parseFromString(body, {
-    fromName: 'Neptune Mutual Blog',
-    recipients: ['marlo@neptunemutual.com'],
-    subject: 'Default Subject',
-    html: 'This is a sample email',
-  });
+  const endpoints = getEndpoints(method);
 
-  const errors = validate([
-    {
-      label: 'From',
-      value: fromName,
-      rules: 'email|required',
-    },
-    {
-      label: 'To',
-      value: recipients,
-      rules: 'array|required',
-    },
-    {
-      label: 'Subject',
-      value: subject,
-      rules: 'string|required',
-    },
-    {
-      label: 'Body',
-      value: html,
-      rules: 'string|required',
-    },
-  ]);
-
-  if (Array.isArray(errors)) {
-    return {
-      statusCode: HTTP_CODES.BAD_REQUEST,
-      body: errors.join('\\n'),
-    };
-  }
-
-  try {
-    const recipientsArray = chunk(recipients, CONFIG.CHUNK_SIZE);
-
-    for (const batch of recipientsArray) {
-      await Promise.all(
-        batch.map((email) => {
-          return service.sendEmail({
-            fromName,
-            recipients: [email],
-            subject,
-            html,
-          });
-        })
-      );
-    }
-    // await Promise.all(
-    //   recipientsArray.map((batch) => {
-    //     return service.sendEmail({
-    //       fromName,
-    //       recipients: batch,
-    //       subject,
-    //       html,
-    //     });
-    //   })
-    // );
-  } catch (error) {
-    console.error(error);
+  if (endpoints.hasOwnProperty(path)) {
+    return endpoints[path](body);
   }
 
   return {
-    statusCode: HTTP_CODES.SERVER_ERROR,
-    body: `Server error occured`,
+    statusCode: HTTP_CODES.NOT_FOUND,
+    body: 'Endpoint not found.',
   };
 };
+
+const ENDPOINTS = {
+  EMAIL: '/email',
+  TEMPLATE: '/template',
+};
+
+/**
+ * @typedef Response
+ * @prop {number} statusCode
+ * @prop {any} body
+ *
+ * @typedef {Object.<string, (body: string) => Promise<Response>>} EndPoint
+ */
+
+const DEFAULT_RESPONSE = Promise.resolve({
+  statusCode: 404,
+  body: 'Unsupported Endpoint',
+});
+
+/**
+ * @type {EndPoint}
+ */
+const POST_ENPOINTS = {
+  [ENDPOINTS.EMAIL]: services.handleSendBulkEmail,
+  [ENDPOINTS.TEMPLATE]: () => DEFAULT_RESPONSE,
+};
+
+/**
+ * @type {EndPoint}
+ */
+const GET_ENDPOINTS = {
+  [ENDPOINTS.TEMPLATE]: () => DEFAULT_RESPONSE,
+};
+
+/**
+ *
+ * @param {'POST' | 'GET'} method
+ * @returns {EndPoint}
+ */
+function getEndpoints(method) {
+  return method === 'POST' ? POST_ENPOINTS : GET_ENDPOINTS;
+}
