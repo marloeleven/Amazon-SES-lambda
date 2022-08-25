@@ -77,16 +77,19 @@ export async function handleSendBulkEmail(body) {
   try {
     const recipientsArray = chunk(recipients, CONFIG.CHUNK_SIZE);
 
-    await Promise.all(
-      recipientsArray.map((batch) => {
-        return sendBulkTemplatedEmail({
-          fromName,
-          recipients: batch,
-          subject,
-          html,
-        });
-      })
-    );
+    for (const batch of recipientsArray) {
+      await sendBulkTemplatedEmail({
+        fromName,
+        recipients: batch,
+        subject,
+        html,
+      });
+    }
+
+    return {
+      statusCode: HTTP_CODES.SUCESS,
+      body: 'Email sent successfully.',
+    };
   } catch (error) {
     console.error(error);
   }
