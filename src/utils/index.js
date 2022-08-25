@@ -1,5 +1,3 @@
-import { CONFIG } from './config';
-
 export const HTTP_CODES = {
   SERVER_ERROR: 500,
   BAD_REQUEST: 400,
@@ -22,23 +20,6 @@ export const DEFAULT_RESPONSE = Promise.resolve({
 });
 
 /**
- * @param {string} base64EncodedBody
- * @returns {object}
- */
-function toObject(base64EncodedBody) {
-  const decodedStr = atob(base64EncodedBody);
-
-  const urlParams = new URLSearchParams(decodedStr);
-  const entries = urlParams.entries();
-
-  const result = {};
-  for (const [key, value] of entries) {
-    result[key] = value;
-  }
-  return result;
-}
-
-/**
  * @template T
  *
  * @param {string} jsonStr
@@ -51,16 +32,6 @@ export function parseEncodedBody(jsonStr, defaultValue = {}) {
   } catch (e) {
     return defaultValue;
   }
-}
-
-/**
- * @param {string} authorization
- * @returns {boolean}
- */
-export function authCheck(authorization) {
-  const [_, token] = authorization.split(' ');
-
-  return token === CONFIG.SECRET_KEY;
 }
 
 /**

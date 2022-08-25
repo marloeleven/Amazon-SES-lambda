@@ -1,4 +1,5 @@
-import { authCheck, HTTP_CODES } from './utils';
+import { HTTP_CODES } from './utils';
+import { authCheck } from './utils/auth';
 import { getEndpoints } from './routes';
 
 /**
