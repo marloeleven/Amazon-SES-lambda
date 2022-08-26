@@ -4,8 +4,10 @@ import { emailSchema } from '../utils/validation-schema';
 import { chunk, HTTP_CODES, MESSAGE, safeParseString } from '../utils';
 
 /**
+ * @typedef {Promise<import('../utils').Response>} Response
  *
  * @param {string} body
+ * @returns {Response}
  */
 export async function handleSendBulkEmail(body) {
   const data = safeParseString(body, false);

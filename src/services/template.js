@@ -4,9 +4,7 @@ import { templateSchema } from '../utils/validation-schema';
 
 /**
  * @typedef {Promise<import('../utils').Response>} Response
- */
-
-/**
+ *
  * @param {string} body
  * @returns {Response}
  */
