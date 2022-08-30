@@ -1,6 +1,7 @@
 import * as ses from '../utils/ses';
 import { emailSchema } from '../utils/validation-schema';
-import { HTTP_CODES, MESSAGE, safeParseString } from '../utils';
+import { chunk, HTTP_CODES, MESSAGE, safeParseString } from '../utils';
+import { CONFIG } from '../utils/config';
 
 /**
  *
@@ -29,14 +30,18 @@ export async function handleSendEmail(body) {
   }
 
   try {
-    for (const email of recipients) {
-      await ses.sendEmail({
-        fromName,
-        recipients: [email],
-        subject,
-        html,
-      });
-    }
+    const recipientsArray = chunk(recipients, CONFIG.CHUNK_SIZE);
+
+    await Promise.allSettled(
+      recipientsArray.map((emails) =>
+        ses.sendBulkTemplatedEmail({
+          fromName,
+          recipients: emails,
+          subject,
+          html,
+        })
+      )
+    );
 
     return {
       statusCode: HTTP_CODES.SUCESS,

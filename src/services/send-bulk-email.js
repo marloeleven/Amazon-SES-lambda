@@ -34,14 +34,16 @@ export async function handleSendBulkEmail(body) {
   try {
     const recipientsArray = chunk(recipients, CONFIG.CHUNK_SIZE);
 
-    for (const batch of recipientsArray) {
-      await ses.sendBulkTemplatedEmail({
-        fromName,
-        recipients: batch,
-        subject,
-        html,
-      });
-    }
+    await Promise.allSettled(
+      recipientsArray.map((emails) =>
+        ses.sendBulkTemplatedEmail({
+          fromName,
+          recipients: emails,
+          subject,
+          html,
+        })
+      )
+    );
 
     return {
       statusCode: HTTP_CODES.SUCESS,
