@@ -8,6 +8,7 @@ import { getEndpoints } from './routes';
  * @param {string} event.body
  * @param {{ authorization: string }} event.headers
  * @param {{ http: { method: 'POST' | 'GET', path: string } }} event.requestContext
+ * @param {object} [event.queryStringParameters]
  *
  * @returns
  */
@@ -15,6 +16,7 @@ export const request = async (event) => {
   const {
     body,
     headers: { authorization },
+    queryStringParameters,
     requestContext: {
       http: { method, path },
     },
@@ -30,7 +32,7 @@ export const request = async (event) => {
   const endpoints = getEndpoints(method);
 
   if (endpoints.hasOwnProperty(path)) {
-    return endpoints[path](body);
+    return endpoints[path](body || queryStringParameters);
   }
 
   return {

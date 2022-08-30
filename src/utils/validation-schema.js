@@ -7,8 +7,12 @@ export const emailSchema = Joi.object({
   html: Joi.string().trim().min(1).required(),
 });
 
-export const templateSchema = Joi.object({
+export const createTemplateSchema = Joi.object({
   name: Joi.string().trim().min(3).max(30).required(),
   subject: Joi.string().trim().min(3).max(50).required(),
   html: Joi.string().trim().min(3).required(),
+});
+
+export const getTemplateSchema = Joi.object({
+  name: Joi.string().trim().min(3).max(30).required(),
 });

@@ -1,17 +1,18 @@
 import { HTTP_CODES, MESSAGE, safeParseString } from '../utils';
 import * as ses from '../utils/ses';
-import { templateSchema } from '../utils/validation-schema';
+import {
+  createTemplateSchema,
+  getTemplateSchema,
+} from '../utils/validation-schema';
 
 /**
  * @typedef {Promise<import('../utils').Response>} Response
  *
- * @param {string} body
+ * @param {{ name: string }} queryStringParameters
  * @returns {Response}
  */
-export async function handleGetTemplate(body) {
-  const data = safeParseString(body, false);
-
-  if (!data) {
+export async function handleGetTemplate(queryStringParameters) {
+  if (!queryStringParameters.name) {
     return {
       statusCode: HTTP_CODES.BAD_REQUEST,
       body: MESSAGE.BAD_REQUEST_NO_DATA,
@@ -21,7 +22,7 @@ export async function handleGetTemplate(body) {
   const {
     error,
     value: { name },
-  } = templateSchema.validate({ name: data.name });
+  } = getTemplateSchema.validate({ name: queryStringParameters.name });
 
   if (error) {
     return {
@@ -64,7 +65,7 @@ export async function handleCreateTemplate(body) {
   const {
     error,
     value: { name, subject, html },
-  } = templateSchema.validate(data);
+  } = createTemplateSchema.validate(data);
 
   if (error) {
     return {
