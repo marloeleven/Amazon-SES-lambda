@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 const DEFAULT = {
   MAX_EMAIL_SENDING_SIZE: 50,
   ORIGIN_EMAIL: 'marlo@neptunemutual.com',

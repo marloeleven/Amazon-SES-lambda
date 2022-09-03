@@ -8,14 +8,15 @@
     "build": "rollup --config"
   },
   "keywords": [],
-  "author": "",
+  "author": "Marlo Dela Torre <mato@splitmedialabs.com>",
   "license": "ISC",
   "dependencies": {
+    "joi": "^17.6.0"
+  },
+  "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-replace": "^4.0.0",
-    "dotenv": "^16.0.1",
-    "joi": "^17.6.0"
-  }
+    "@rollup/plugin-node-resolve": "^13.3.0"
+  },
+  "repository": "git@github.com:marloeleven/AmazonSES-Lambda.git"
 }
