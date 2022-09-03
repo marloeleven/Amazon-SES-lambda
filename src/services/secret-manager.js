@@ -8,7 +8,7 @@ import * as ses from '../utils/ses';
  */
 export async function handleGetSecrets() {
   try {
-    const data = ses.getSecrets();
+    const data = await ses.getSecrets();
 
     // if ('SecretString' in data) {
     //   // secret = data.SecretString;

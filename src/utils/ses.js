@@ -4,7 +4,7 @@ import { CONFIG } from './config';
 
 const region = 'us-west-2';
 const ses = new aws.SES({ region });
-const sm = aws.SecretsManager({
+const sm = new aws.SecretsManager({
   region,
   apiVersion: CONFIG.SECRET_MANAGER_API_VERSION,
 });

@@ -34,11 +34,6 @@ export const TEMPLATES = {
  * @typedef {PostEndPoint | GetEndPoint} EndPoints
  */
 
-export const DEFAULT_RESPONSE = Promise.resolve({
-  statusCode: 404,
-  body: 'Unsupported Endpoint',
-});
-
 /**
  * @template T
  *

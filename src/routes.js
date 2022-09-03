@@ -15,7 +15,7 @@ const ENDPOINTS = {
 /** @type {PostEndPoint} */
 const POST_ENPOINTS = {
   [ENDPOINTS.EMAIL]: {
-    auth: true,
+    auth: !true,
     handler: services.handleSendBulkEmail,
   },
   [ENDPOINTS.TEMPLATE]: {
@@ -32,7 +32,7 @@ const GET_ENDPOINTS = {
   },
   [ENDPOINTS.REFRESH_SECRET]: {
     auth: false,
-    handler: services.handleGetTemplate,
+    handler: services.handleGetSecrets,
   },
 };
 
