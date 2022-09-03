@@ -20,7 +20,18 @@ export const TEMPLATES = {
  * @prop {number} statusCode
  * @prop {any} body
  *
- * @typedef {Object.<string, (body: string) => Promise<Response>>} EndPoint
+ * @typedef PostEndPointHandler
+ * @prop {boolean} auth
+ * @prop {(body: string) => Promise<Response>} handler
+ *
+ * @typedef GetEndPointHandler
+ * @prop {boolean} auth
+ * @prop {(param: object) => Promise<Response>} handler
+ *
+ * @typedef {Object.<string, PostEndPointHandler>} PostEndPoint
+ * @typedef {Object.<string, GetEndPointHandler>} GetEndPoint
+ *
+ * @typedef {PostEndPoint | GetEndPoint} EndPoints
  */
 
 export const DEFAULT_RESPONSE = Promise.resolve({

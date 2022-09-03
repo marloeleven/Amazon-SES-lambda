@@ -29,4 +29,11 @@ __GET__ /template - _check if template exists_
    - name - Template Unique name
 
 
+### Building
+rollup --config
+
+- build will be in `bundle/index.js` and then upload it.
+
+
+
 This is a work inprogress :)

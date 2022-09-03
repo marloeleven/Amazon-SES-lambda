@@ -1,31 +1,44 @@
 import * as services from './services';
 
+/**
+ * @typedef {import('./utils').PostEndPoint} PostEndPoint
+ * @typedef {import('./utils').GetEndPoint} GetEndPoint
+ * @typedef {import('./utils').EndPoints} EndPoints
+ */
+
 const ENDPOINTS = {
   EMAIL: '/email',
   TEMPLATE: '/template',
+  REFRESH_SECRET: '/refresh-secret',
 };
 
-/**
- * @typedef {import('./utils').EndPoint} EndPoint
- *
- * @type {EndPoint}
- */
+/** @type {PostEndPoint} */
 const POST_ENPOINTS = {
-  [ENDPOINTS.EMAIL]: services.handleSendBulkEmail,
-  [ENDPOINTS.TEMPLATE]: services.handleCreateTemplate,
+  [ENDPOINTS.EMAIL]: {
+    auth: true,
+    handler: services.handleSendBulkEmail,
+  },
+  [ENDPOINTS.TEMPLATE]: {
+    auth: true,
+    handler: services.handleCreateTemplate,
+  },
 };
 
-/**
- * @type {EndPoint}
- */
+/** @type {GetEndPoint} */
 const GET_ENDPOINTS = {
-  [ENDPOINTS.TEMPLATE]: services.handleGetTemplate,
+  [ENDPOINTS.TEMPLATE]: {
+    auth: true,
+    handler: services.handleGetTemplate,
+  },
+  [ENDPOINTS.REFRESH_SECRET]: {
+    auth: false,
+    handler: services.handleGetTemplate,
+  },
 };
 
 /**
- *
  * @param {'POST' | 'GET'} method
- * @returns {EndPoint}
+ * @returns {EndPoints}
  */
 export function getEndpoints(method) {
   return method === 'POST' ? POST_ENPOINTS : GET_ENDPOINTS;

@@ -34,16 +34,19 @@ export async function handleSendBulkEmail(body) {
   try {
     const recipientsArray = chunk(recipients, CONFIG.CHUNK_SIZE);
 
-    await Promise.allSettled(
-      recipientsArray.map((emails) =>
-        ses.sendBulkTemplatedEmail({
+    for (const batch of recipientsArray) {
+      await ses
+        .sendBulkTemplatedEmail({
           fromName,
-          recipients: emails,
+          recipients: batch,
           subject,
           html,
         })
-      )
-    );
+        .catch((error) => {
+          console.error(error);
+          // catching error here will prevent the loop from stopping
+        });
+    }
 
     return {
       statusCode: HTTP_CODES.SUCESS,

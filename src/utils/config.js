@@ -1,12 +1,17 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const MAX_EMAIL_SENDING_SIZE = 50;
+const DEFAULT = {
+  MAX_EMAIL_SENDING_SIZE: 50,
+  ORIGIN_EMAIL: 'marlo@neptunemutual.com',
+  SECRET_KEY: 'SES-Secrets',
+  SECRET_MANAGER_API_VERSION: '2017-10-17',
+};
+
 export const CONFIG = {
-  //  @ts-ignore
-  SECRET_KEY: process.env.SECRET_KEY,
-  //  @ts-ignore
-  CHUNK_SIZE: Number(process.env.CHUNK_SIZE) || MAX_EMAIL_SENDING_SIZE,
-  //  @ts-ignore
-  ORIGIN_EMAIL: process.env.ORIGIN_EMAIL,
+  AUTH_TOKEN: '',
+  CHUNK_SIZE: DEFAULT.MAX_EMAIL_SENDING_SIZE,
+  ORIGIN_EMAIL: DEFAULT.ORIGIN_EMAIL,
+  SECRET_KEY: DEFAULT.SECRET_KEY,
+  SECRET_MANAGER_API_VERSION: DEFAULT.SECRET_MANAGER_API_VERSION,
 };

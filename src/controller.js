@@ -22,17 +22,21 @@ export const request = async (event) => {
     },
   } = event;
 
-  if (!authCheck(authorization)) {
-    return {
-      statusCode: HTTP_CODES.UNAUTHORIZED_REQUEST,
-      body: `Unauthorized Request`,
-    };
-  }
-
   const endpoints = getEndpoints(method);
 
   if (endpoints.hasOwnProperty(path)) {
-    return endpoints[path](body || queryStringParameters);
+    const { handler, auth } = endpoints[path];
+
+    if (auth) {
+      if (!authCheck(authorization)) {
+        return {
+          statusCode: HTTP_CODES.UNAUTHORIZED_REQUEST,
+          body: `Unauthorized Request`,
+        };
+      }
+    }
+
+    return handler(body || queryStringParameters);
   }
 
   return {

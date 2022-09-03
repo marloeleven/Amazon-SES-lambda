@@ -7,5 +7,5 @@ import { CONFIG } from './config';
 export function authCheck(authorization) {
   const [_, token] = authorization.split(' ');
 
-  return token === CONFIG.SECRET_KEY;
+  return token === CONFIG.AUTH_TOKEN;
 }

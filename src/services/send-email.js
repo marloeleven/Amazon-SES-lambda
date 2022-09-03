@@ -4,8 +4,10 @@ import { chunk, HTTP_CODES, MESSAGE, safeParseString } from '../utils';
 import { CONFIG } from '../utils/config';
 
 /**
+ * @typedef {Promise<import('../utils').Response>} Response
  *
  * @param {string} body
+ * @returns {Response}
  */
 export async function handleSendEmail(body) {
   const data = safeParseString(body, false);
@@ -32,16 +34,19 @@ export async function handleSendEmail(body) {
   try {
     const recipientsArray = chunk(recipients, CONFIG.CHUNK_SIZE);
 
-    await Promise.allSettled(
-      recipientsArray.map((emails) =>
-        ses.sendBulkTemplatedEmail({
+    for (const batch of recipientsArray) {
+      await ses
+        .sendEmail({
           fromName,
-          recipients: emails,
+          recipients: batch,
           subject,
           html,
         })
-      )
-    );
+        .catch((error) => {
+          console.error(error);
+          // catching error here will prevent the loop from stopping
+        });
+    }
 
     return {
       statusCode: HTTP_CODES.SUCESS,
