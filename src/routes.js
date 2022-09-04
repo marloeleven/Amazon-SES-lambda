@@ -15,7 +15,7 @@ const ENDPOINTS = {
 /** @type {PostEndPoint} */
 const POST_ENPOINTS = {
   [ENDPOINTS.EMAIL]: {
-    auth: !true,
+    auth: true,
     handler: services.handleSendBulkEmail,
   },
   [ENDPOINTS.TEMPLATE]: {
@@ -43,3 +43,7 @@ const GET_ENDPOINTS = {
 export function getEndpoints(method) {
   return method === 'POST' ? POST_ENPOINTS : GET_ENDPOINTS;
 }
+
+
+// on load, get secrets
+services.handleGetSecrets();
