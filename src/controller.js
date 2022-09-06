@@ -1,13 +1,33 @@
-import { HTTP_CODES } from './utils';
+import { HTTP_CODES, TEMPLATES } from './utils';
 import { authCheck } from './utils/auth';
-import { getEndpoints } from './routes';
+import * as services from './services';
+
+let initizalized = false;
+
+async function ensureBasicTemplate() {
+  try {
+    return services.handleGetTemplate({ name: TEMPLATES.BASIC });
+  } catch (error) {
+    return services.handleCreateTemplate(
+      JSON.stringify({
+        name: TEMPLATES.BASIC,
+        subject: '{{subject}}',
+        html: '{{html}}',
+      })
+    );
+  }
+}
+
+async function init() {
+  return Promise.all([ensureBasicTemplate(), services.handleGetSecrets()]);
+}
 
 /**
  *
  * @param {object} event
  * @param {string} event.body
  * @param {{ authorization: string }} event.headers
- * @param {{ http: { method: 'POST' | 'GET', path: string } }} event.requestContext
+ * @param {{ http: { method: 'POST' } }} event.requestContext
  * @param {object} [event.queryStringParameters]
  *
  * @returns
@@ -16,28 +36,32 @@ export const request = async (event) => {
   const {
     body,
     headers: { authorization },
-    queryStringParameters,
     requestContext: {
-      http: { method, path },
+      http: { method },
     },
   } = event;
 
-  const endpoints = getEndpoints(method);
+  if (!initizalized) {
+    try {
+      await init();
+      initizalized = true;
+    } catch (error) {
+      return {
+        statusCode: HTTP_CODES.SERVER_ERROR,
+        body: `Unable to correctly initialized the server`,
+      };
+    }
+  }
 
-  if (endpoints.hasOwnProperty(path)) {
-    console.log(`ENDPOINT: ${path}`);
-    const { handler, auth } = endpoints[path];
-
-    if (auth) {
-      if (!authCheck(authorization)) {
-        return {
-          statusCode: HTTP_CODES.UNAUTHORIZED_REQUEST,
-          body: `Unauthorized Request`,
-        };
-      }
+  if (method === 'POST') {
+    if (!authCheck(authorization)) {
+      return {
+        statusCode: HTTP_CODES.UNAUTHORIZED_REQUEST,
+        body: `Unauthorized Request`,
+      };
     }
 
-    return handler(body || queryStringParameters);
+    return services.handleSendBulkEmail(body);
   }
 
   return {
