@@ -45,13 +45,13 @@ export const request = async (event) => {
     try {
       await init();
       initizalized = true;
+      console.log('Initialization complete', initizalized);
     } catch (error) {
+      console.error(error);
       return {
         statusCode: HTTP_CODES.SERVER_ERROR,
         body: `Unable to correctly initialized the server`,
       };
-    } finally {
-      console.log('Initialization complete', initizalized);
     }
   }
 
