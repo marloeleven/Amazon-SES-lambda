@@ -27,8 +27,8 @@ export async function handleGetSecrets() {
 
       return {
         statusCode: HTTP_CODES.SERVER_ERROR,
-        body: 'Unable to parse Secret value'
-      }
+        body: 'Unable to parse Secret value',
+      };
     }
 
     return {
@@ -36,26 +36,7 @@ export async function handleGetSecrets() {
       body: 'Unable to fetch secret keys',
     };
   } catch (error) {
-    if (error.code === 'DecryptionFailureException')
-      // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw error;
-    else if (error.code === 'InternalServiceErrorException')
-      // An error occurred on the server side.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw error;
-    else if (error.code === 'InvalidParameterException')
-      // You provided an invalid value for a parameter.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw error;
-    else if (error.code === 'InvalidRequestException')
-      // You provided a parameter value that is not valid for the current state of the resource.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw error;
-    else if (error.code === 'ResourceNotFoundException')
-      // We can't find the resource that you asked for.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw error;
+    console.error(error);
   }
 
   return {
