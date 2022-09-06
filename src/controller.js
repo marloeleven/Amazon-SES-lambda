@@ -50,6 +50,8 @@ export const request = async (event) => {
         statusCode: HTTP_CODES.SERVER_ERROR,
         body: `Unable to correctly initialized the server`,
       };
+    } finally {
+      console.log('Initialization complete', initizalized);
     }
   }
 
@@ -61,6 +63,7 @@ export const request = async (event) => {
       };
     }
 
+    console.log('Send Email', JSON.stringify(body));
     return services.handleSendBulkEmail(body);
   }
 
