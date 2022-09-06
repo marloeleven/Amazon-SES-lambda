@@ -44,6 +44,15 @@ export function getEndpoints(method) {
   return method === 'POST' ? POST_ENPOINTS : GET_ENDPOINTS;
 }
 
-
 // on load, get secrets
-services.handleGetSecrets();
+services
+  .handleGetSecrets()
+  .then(() => {
+    console.log('SECRET MANAGER: SUCCESS');
+  })
+  .catch(() => {
+    console.log('SECRET MANAGER: ERROR');
+  })
+  .finally(() => {
+    console.log('SECRET MANAGER: COMPLETE');
+  });

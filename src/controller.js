@@ -25,6 +25,7 @@ export const request = async (event) => {
   const endpoints = getEndpoints(method);
 
   if (endpoints.hasOwnProperty(path)) {
+    console.log(`ENDPOINT: ${path}`);
     const { handler, auth } = endpoints[path];
 
     if (auth) {
