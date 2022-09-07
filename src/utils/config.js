@@ -1,6 +1,6 @@
 const DEFAULT = {
   MAX_EMAIL_SENDING_SIZE: 50,
-  ORIGIN_EMAIL: 'marlo@neptunemutual.com',
+  ORIGIN_EMAIL: 'marlodelatorre11@gmail.com',
   SECRET_KEY: 'SES-Secrets',
   SECRET_MANAGER_API_VERSION: '2017-10-17',
 };
